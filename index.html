@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<div>
+		<title>{{title}}</title>
+		<link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+		<link rel="stylesheet" href="bower_components/angular-material-icons/angular-material-icons.css" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="css/tasklee.css">
+	</div>
+</head>
+
+<body ng-controller="appController" layout="row">
+
+	<md-sidenav md-is-locked-open="$mdMedia('gt-sm')"md-component-id="left" class="md-whiteframe-z0 md-sidenav-left ">
+		
+		<md-toolbar class="md-primary md-hue-2 md-medium" ng-show="true">
+		  <div class="md-toolbar-tools">
+			    <div >
+	          <md-button  class="md-icon-button" ng-click="toggleSidenav('left')" aria-label="Menu">
+	              <ng-md-icon icon="{{icons.menu}}"></ng-md-icon>
+	          </md-button>
+		 			</div>
+	 				<span>{{title}}</span> 
+	    </div>
+    </md-toolbar>
+
+		<!-- Projects -->
+		<md-list>
+			<md-list-item ng-repeat="p in projects" ng-click="ui.selected_project = p"
+										ng-class="{'selected' : p === ui.selected_project }">
+				<md-button class="md-icon-button " aria-label="Project">
+					<ng-md-icon icon="{{icons.project}}" class="nav-icons"></ng-md-icon>
+				</md-button>
+				<div id="nav-project-name" >{{p}}</div>
+				<md-divider ng-if="$last"></md-divider>
+			</md-list-item>
+		</md-list>
+
+		<!-- Contexts -->
+		<md-list>
+			<md-list-item id="nav-context" ng-click="ui.selected_context = c" ng-repeat="c in contexts"
+										ng-class="{'selected' : c === ui.selected_context }">
+				<md-button class="md-icon-button" aria-label="Context">
+					<ng-md-icon icon="{{icons.context}}" class="nav-icons"></ng-md-icon>
+				</md-button>
+				<span>{{c}}</span>
+				<md-divider ng-if="$last"></md-divider>
+			</md-list-item>
+		</md-list>
+	</md-sidenav>
+ 
+
+	<section  layout="column" layout-fill ng-cloak>
+			<!-- Toolbar -->
+		  <md-toolbar layout="row" class="md-primary md-hue-2 md-medium">
+		    <div class="md-toolbar-tools">
+
+		       
+		      <span flex></span>
+
+		      <!-- New task -->
+		     	<md-input-container  class="md-block toolbar-input" layout="row" flex="40">
+		     		<label>New task</label>
+		     	  <input  type="text" ng-model="newTaskInput" id="newTaskInput" style="color: greenyellow;">
+			     	<span>
+				      <md-button class="md-icon-button md-primary  md-mini" ng-disabled="false" aria-label="Add">
+				      	<ng-md-icon style="color: light-gray;" icon="{{icons.add}}" ></ng-md-icon>
+				      </md-button>
+			      </span>
+		     	</md-input-container>
+		      <span flex></span>
+
+		      <!-- Search Input -->
+		      <md-button class="md-icon-button" ng-click="document.getElementById('searchInput').focus();" aria-label="Search">
+		      	<ng-md-icon icon="{{icons.search}}"></ng-md-icon>
+		      </md-button>
+	        <span >
+	          <md-input-container id="search-input" class="md-block " >
+		        	<label>search</label>
+		          <input type="text" ng-model="searchString" id="searchInput" flex="20" style="color: white;">
+		        </md-input-container>
+					</span>
+		    </div>
+		  </md-toolbar>
+
+	<!-- Header and FAB -->
+		<div layout="column" class="relative" layout-fill role="main">
+
+
+			<!-- New task FAB -->
+		  <md-button class="md-fab md-fab-bottom-right md-primary" aria-label="Add" ng-click="showAdd($event)" aria-label="Add">
+		    <ng-md-icon icon="add"></ng-md-icon>
+		  </md-button>
+	  </div>
+
+	  <!-- Container for SideNav  -->
+	  <md-content flex layout="row" id="page">
+ 		 
+
+
+
+	  	<!-- Main Content Area -->
+ 
+     	<ui-view flex layout="column" layout-fill layout-padding flex="70">
+    		<div class="inset" hide-sm></div>
+
+    		<md-card flex-gt-sm="90" flex-gt-md="80">
+      		<md-card-content>
+        		<h2 class="inset">{{filterName}}</h2>
+				    <md-list>
+				      <!-- <task-item ng-repeat="t in tasks | filter:searchString" task="t" view="tl3line"></task-item> -->
+			      	<md-list-item flex class="md-primary md-hue-1 task-item" 
+									      		ng-repeat="task in tasks | filter:searchString" 
+									      		ng-click="selected.task = task.id">
+								<md-button  class="md-icon-button" ng-click=""  aria-label="Task">
+								  <ng-md-icon icon="{{icons.task}}"></ng-md-icon>
+								</md-button>
+		      			<div flex class="md-primary md-hue-1 task" layout="column"  >
+		      				<div  class="md-subhead task-what-line" layout="row">
+	  				        <div flex="80" ng-class="{'empty-field': (!task.what)}">{{task.what}}</div>
+	  				        <div flex="10" ng-class="{'empty-field': (!task.status)}">{{task.status}}</div>
+	  				        <div flex="10" ng-class="{'empty-field': (!task.due)}">{{task.due}}</div>
+				          </div>  <!-- whatline -->
+				          <p  class="md-body-1 task-detail-line" layout="row"
+				          		ng-show="task.ui.showDetailLine"> 
+				          	<span flex="30" ng-class="{'empty-field': (!task.project)}">{{task.project || "(no project)"}}</span>
+	  				        <span flex="30" ng-class="{'empty-field': (!task.assignment)}">{{task.assignment || "(no assignment)"}}</span>
+	  				        <span flex="20" ng-class="{'empty-field': (!task.url)}">{{task.url  || "(no URL)"}}</span>  				          	
+	  				        <span flex="10" ng-class="{'empty-field': (!task.context)}">{{task.context || "(anywhere)"}}</span>  				          	
+	  				        <span flex="10" ng-class="{'empty-field': (!task.who)}">{{task.who || "(nobody)"}}</span>  				          	
+  				        </p>
+  				        <p  class="md-body-2 task-note-line" layout="row"
+  				        	ng-show="task.ui.showNotesLine"> 
+				          	<span flex="80" class="task-note">{{task.notes}}</span>
+	  				        <span flex="20" ng-class="{'empty-field': (!task.tags)}">{{task.tags || "(no tags)"}}</span>
+  				        </p>
+		            </div>
+	            </md-list-item>
+			    	</md-list>
+			    </md-card-content>
+		    </md-card>
+ 			</ui-view>
+	    <span flex-sm="0" flex-gt-sm="5" flex-gt-md="10"></span>
+    </md-content>
+	</section>  <!-- Page -->
+
+	<!-- Scripts & Libraries-->
+	<div>
+    <!-- <script src="bower_components/material-design-lite/material.min.js"></script> -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-material/angular-material.js"></script>
+    <script src="bower_components/angular-material-icons/angular-material-icons.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <!-- <script src="bower_components/angular-material/modules/js/toolbar/toolbar.min.js"></script> -->
+    <script src="js/tasklee.js"></script>
+  </div>
+</body>
+</html>

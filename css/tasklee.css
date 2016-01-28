@@ -1,0 +1,155 @@
+/*
+@import url(https://fonts.googleapis.com/css?family=RobotoDraft&lang=en);
+ng-md-icon {
+    fill: white;
+    -webkit-transition: fill 750ms ease-in-out;
+    -moz-transition: fill 750ms ease-in-out;
+    -o-transition: fill 750ms ease-in-out;
+    transition: fill 750ms ease-in-out;
+}
+ng-md-icon > svg {
+    -webkit-transition: width 750ms ease-in-out, height 750ms ease-in-out;
+    -moz-transition: width 750ms ease-in-out, height 750ms ease-in-out;
+    -o-transition: width 750ms ease-in-out, height 750ms ease-in-out;
+    transition: width 750ms ease-in-out, height 750ms ease-in-out;
+}
+
+
+body {
+    font-family: 'RobotoDraft', Arial, sans-serif;
+    /*font-size: 16px;
+    background-color: #263238;
+    color: white;
+    padding: 20px;
+}
+
+#nav-context  > .md-no-style {
+  height:auto;
+  min-height: $list-item-three-line-height;
+  &.md-long-text {
+    margin:1.6em;
+  }
+}
+
+#nav-project  > .md-no-style {
+  line-height: 20%;
+  font-size: 120%;
+  height:auto;
+  min-height: $list-item-three-line-height;
+  &.md-long-text {
+    margin:1.6em;
+  }
+}
+
+#nav-project-name {
+  line-height: 80%;
+}
+*/
+
+$gray: #eee;
+
+md-content.md-default-theme {
+  background-color: $gray;
+}
+
+md-card {
+  background-color: #fff;
+  h2:first-of-type {
+    margin-top: 0;
+  }
+}
+ 
+
+#searchStringInput {
+  line-height: 100%;
+  font-color:white;
+}
+
+
+#page {
+  background: #EEEEEE;
+}
+
+.toolbar-input {
+   border-radius: 4px;
+  margin: 0px;
+  padding: 0px;
+  background: #1976D2;
+  font-size: 80%;
+}
+
+
+#page-content {
+  background-color: $gray;
+}
+
+.task-icon {
+  vertical-align:  top;
+  font-size: 300%
+}
+
+.nav-icons {
+  color: #BDBDBD;
+}
+
+.task-item {
+  margin-bottom: 10px;
+}
+
+.task-what-line {
+  background-color:  red ,
+	line-height: 100%;
+	font-size: 130%;
+	padding: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  background:Gainsboro ;
+  border-radius: 3px;
+}
+
+.task-detail-line {
+  line-height: 100%;
+  font-size: 100%;
+  padding : 5px;
+  margin : 3px 3px;
+/*  white-space: nowrap; */ 
+/*  overflow: hidden;*/
+  background:WhiteSmoke ;
+}
+
+
+.task-note-line {
+  line-height: 100%;
+  font-size: 90%;
+  padding: 5px 10px;
+  margin : 10px;
+  margin-top: 0px;
+/*  white-space: nowrap;  */
+  overflow: hidden;
+}
+
+.task-note {
+  border: 1px solid Gainsboro;
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.task-separator {
+  padding-top : 10px;
+  margin-top: 10px;
+  border: 20px;
+}
+
+.empty-field {
+  color:gray;
+  font-style: italic;
+  font-size: 80%;
+
+.task-card {
+  padding: 100px;
+  width:50%;
+  height: 100%;
+}
