@@ -6,8 +6,8 @@ app.controller('appController', app_requires);
 
 app.config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
-    .primaryPalette('blue')
-    .accentPalette('grey');
+    .primaryPalette('amber')
+    .accentPalette('orange');
 });
 
 app.config(function($mdIconProvider) {
@@ -28,35 +28,41 @@ app.directive('taskItem', function() {
   rtn.template=getItemView(itemView);
   return rtn;
 });
-
-// app.filter('taskView', function() {
-//   return function(tasks) {
-//     var filtered = [];
-//     angular.forEach(tasks, taskView(task));
-//     return filtered;
-//   };
-// });
-
+ 
 /*
   Main Controller
 */
 function appController($scope) {
 	$scope.defaults = getAppDefaults();
 	$scope.pref = getUserPrefs();
-	$scope.searchString = "";
+	$scope.ui= {};
+	$scope.ui.searchString = "";
+	$scope.ui.selectedProject = "";
+	$scope.ui.selectedContext = "";
 	$scope.title = "TaskLee";
 	$scope.filterName = "All Tasks";
 	$scope.tasks = getTaskList();
 	$scope.projects = getProjectList($scope.tasks);
 	$scope.contexts = getContextList($scope.tasks);
+
+	$scope.submitQuickTask = function() {
+		var qt = $scope.ui.newTask;
+		var pt = parseQuickTask(qt);
+		var nt = newTask(pt);
+			$scope.tasks.push(nt);
+			$scope.ui.newTask = "";
+	};
+
 	$scope.selected = {
 		task: $scope.tasks[0].id,
 		project: "",
 		context: ""
 	};
+
 	$scope.toggleSidenav = function(menuId) {
 	  $mdSidenav(menuId).toggle();
 	};
+
 	$scope.icons = {
 		add: "add_circle_outline",
 		context: "place",
@@ -68,7 +74,39 @@ function appController($scope) {
 		project: "work", 
 		search: "search",
 		status_complete: "done",
-		task: "check_box_outline_blank"
+		task: "check_box_outline_blank",
+		close: "close"
+	};
+
+	$scope.showTaskDetailLine = function(t) {
+		var result=true;
+		if (!t.project&&!t.assignment&&!t.url&&!t.context&&!t.who) {
+			result = false;
+		}
+		return result;
+	};
+
+	$scope.showTaskNotesLine = function(t) {
+		result = true;
+		if (!t.notes&&!t.tags) {
+			result = false;
+		}
+		return result;
+	};
+
+	$scope.focusElementId= function(id) {
+		window.document.getElementById(id).focus();
+	};
+
+	$scope.selectProject = function(project) {
+		$scope.ui.selectedProject = project;
+		$scope.ui.selectedContext = "";
+
+	};	
+
+	$scope.selectContext = function(context) {
+		$scope.ui.selectedContext = context;
+		$scope.ui.selectedProject = "";
 	};
  }
 
@@ -96,15 +134,26 @@ function getAppDefaults() {
 	return defaults;
 }
 
+// Parse single-line task into separate fields
+function parseQuickTask(qt) {
+	var t = {};
+	t.what=qt;
+	t.project = "none";
+	t.context = 'none';
+	return newTask(t);
+}
+
 function newTask(taskObject) {
-	taskObject.taskView = taskView(taskObject);
+	// taskObject.taskView = taskView(taskObject);
 	return taskObject;
 }
 
 function getTaskList() {
 	var data = [];
-	data.push(newTask( { 
-		    "id": "TL000001",
+	data.push(newTask( {"id": "TL000000",
+		    "what": "Take out the trash"
+	    }));
+	data.push(newTask( {"id": "TL000001",
 		    "what": "Buy milk",
 		    "who": "Ben", 
 		    "project" : "Groceries",
@@ -119,37 +168,32 @@ function getTaskList() {
 		    "tags" : "",
 		    "notes" : ""
 	    }));
-	data.push(newTask( { 
-		    "id": "TL000002",
+	data.push(newTask( {"id": "TL000002",
 		    "what": "Learn javascript",
 		    "who": "Laura",     
 		    "context" : "online",
 		    "project" : "Education"
 	    }));
-	data.push(newTask( { 	
-		    "id": "TL000003",
+	data.push(newTask( {"id": "TL000003",
 		    "what": "Rake the leaves.",
 		    "notes": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of 'de Finibus Bonorum et Malorum' (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, 'Lorem ipsum dolor sit amet..', comes from a line in section 1.10.32.",
 		    "who": "Richard",     
 		    "project" : "Yardwork"
 	    }));
-	data.push(newTask( { 	
-		    "id": "TL000004",
+	data.push(newTask( {"id": "TL000004",
 		    "who": "Peter",
 		    "priority": "B",
 		    "what": "Prepare dinner",
 		    "context" : "home",
 		    "notes": "Falls mainly on the plains"
 	    }));
-	data.push(newTask( { 	
-		    "id": "TL000005",        
+	data.push(newTask( {"id": "TL000005",
 		    "who": "Bob",
 		    "what": "Buy bread ",
 		    "project" : "Groceries",		    
 		    "notes": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
 	    }));
-	data.push(newTask( { 	
-		    "id": "TL000006",        
+	data.push(newTask( {"id": "TL000006",
 		    "who": "Walter",
 		    "what": "Walk the dog",
 		    "project": "Chores",
@@ -157,16 +201,14 @@ function getTaskList() {
 		    "context" : "home",
 		    "notes": "He played nick nack on my drum."
 	    }));
-	data.push(newTask( { 	
-		    "id": "TL000007",        
+	data.push(newTask( {"id": "TL000007",
 		    "who": "Nigel",
 		    "priority": "Z",
 		    "what": "Know everything",
 		    "context" : "brain",
 		    "notes": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
 	    }));
-	data.push(newTask( { 	
-		    "id": "TL000008",        
+	data.push(newTask( {"id": "TL000008",
 		    "who": "Donald",
 		    "what": "Do the dishes",
 		    "project": "",
@@ -261,21 +303,21 @@ function getItemView(viewName) {
 	} 
 	else {
 		// return getItemView($scope.defaults.taskView)
-		return tl3Line;
+		return tlDefault
 		// return '<h1>Error</h1>';
 	}
 }
 
-function taskView(task) {
-	task.ui={};
-	task.ui.showDetailLine = true;
-	if (!task.project&&!task.assignment&&!task.url&&!task.context&&!task.who) {
-		task.ui.showDetailLine = false;
-	}
+// function taskView(t) {
+// 	t.ui={};
+// 	t.ui.showDetailLine = true;
+// 	if (!t.project&&!t.assignment&&!t.url&&!t.context&&!t.who) {
+// 		t.ui.showDetailLine = false;
+// 	}
 
-	task.ui.showNotesLine = true;
-	if (!task.notes&&!task.tags) {
-		task.ui.showNotesLine = false;
-	}
-}
+// 	t.ui.showNotesLine = true;
+// 	if (!t.notes&&!t.tags) {
+// 		t.ui.showNotesLine = false;
+// 	}
+// }
 
